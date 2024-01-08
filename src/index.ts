@@ -7,9 +7,9 @@ import axios, {
 } from "axios";
 
 /**
- * @member fullScreenLoadingController 全屏loading控制器
+ * @member loadingController loading控制器
  * @member createAxiosDefaults axios实例化默认配置
- * @member requestWrapperConfigDefaults 请求包装器配置默认配置（是否开启全屏loading、abortController、customErrorHandler）
+ * @member requestWrapperConfigDefaults 请求包装器配置默认配置（是否开启loading、abortController、customErrorHandler）
  * @method requestInterceptorPreHandler 请求拦截器前置处理器（token设定）
  * @method responseInterceptorPreHandler 响应拦截器前置处理器
  * @method nonResponseErrorDefaultHandler 非响应错误处理器
@@ -17,9 +17,9 @@ import axios, {
  * @method requestWrapperPreHandler 请求包装器前置处理器（例如：网络异常、登录状态校验等处理）
  */
 export type UseRequestWrapperConfig = {
-  fullScreenLoadingController?: {
-    openFullscreenLoading: () => Promise<void>;
-    closeFullscreenLoading: () => Promise<void>;
+  loadingController?: {
+    openLoading: () => Promise<void>;
+    closeLoading: () => Promise<void>;
   };
   createAxiosDefaults?: CreateAxiosDefaults;
   requestWrapperConfigDefaults?: RequestWrapperConfig;
@@ -55,7 +55,7 @@ export default function useRequestWrapper(
   useRequestWrapperConfig: UseRequestWrapperConfig
 ) {
   const {
-    fullScreenLoadingController,
+    loadingController,
     createAxiosDefaults,
     requestInterceptorPreHandler,
     responseInterceptorPreHandler,
@@ -102,8 +102,8 @@ export default function useRequestWrapper(
       if (requestWrapperPreHandler && !(await requestWrapperPreHandler())) {
         return;
       }
-      if (isLoading && fullScreenLoadingController) {
-        await fullScreenLoadingController.openFullscreenLoading();
+      if (isLoading && loadingController) {
+        await loadingController.openLoading();
       }
       return await businessRequest();
     } catch (error) {
@@ -123,8 +123,8 @@ export default function useRequestWrapper(
         throw error;
       }
     } finally {
-      if (isLoading && fullScreenLoadingController) {
-        await fullScreenLoadingController.closeFullscreenLoading();
+      if (isLoading && loadingController) {
+        await loadingController.closeLoading();
       }
     }
   }
